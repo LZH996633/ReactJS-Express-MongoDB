@@ -9,6 +9,7 @@ class Chat extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.state.ids = new Set();
     this.state.messageList = [];
     this.refMsg = React.createRef();
     this.refBody = React.createRef();
@@ -37,22 +38,30 @@ class Chat extends React.Component {
 
   process_MessageList(data) {
     this.state.messageList = data.list;
+    this.state.idsMap = {};
+    data.list.forEach((item) => {
+      this.state.idsMap[item.id] = item;
+    });
     this.update();
     this.updateScrollTop();
   }
   updateScrollTop() {
     setTimeout(() => {
       if (this.refBody.current) {
-        this.refBody.current.scrollTop = 10000000;
+        this.refBody.current.scrollTop += 100000;
       }
     }, 100);
   }
-  process_Message(data) {
-    //
-    if (!data.data) {
+  process_Message(body) {
+    if (!body.data) {
       return;
     }
-    this.state.messageList.push(data.data);
+    const {data} = body;
+
+    const {id} = data;
+    this.state.idsMap[id] = data;
+    // console.log('id->times=3', id);
+    this.state.messageList = Object.values(this.state.idsMap);
     this.update();
     this.updateScrollTop();
   }

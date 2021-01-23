@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import styles from './pages.module.scss';
 import {userSignUp} from '../actions/index';
+import Utility from '../common/Utility';
 
 class SignUp extends React.Component {
   constructor(props) {
@@ -16,6 +17,13 @@ class SignUp extends React.Component {
   }
 
   async handleSignUp() {
+    const {email} = this.state.info;
+    if (email) {
+      if (!/^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/.test(email)) {
+        Utility.Alert('email Incorrect format');
+        return;
+      }
+    }
     await this.props.userSignUp(this.state.info);
     alert('Register success');
     this.props.history.push('/signin');
@@ -28,31 +36,31 @@ class SignUp extends React.Component {
           <div className={`row align-center ${styles.singupRow} `}>
             <div className={styles.signupLabel}>Username:</div>
             <div className={styles.col}>
-              <input placeholder="Please enter username" onChange={this.handleChange.bind(this, 'username')} />
+              <input placeholder="Please enter username" onChange={this.handleChange.bind(this, 'username')} maxLength="30" />
             </div>
           </div>
           <div className={`row align-center ${styles.singupRow} `}>
             <div className={styles.signupLabel}>Email:</div>
             <div className={styles.col}>
-              <input placeholder="Please enter email" onChange={this.handleChange.bind(this, 'email')} />
+              <input placeholder="Please enter email" onChange={this.handleChange.bind(this, 'email')} maxLength="80"/>
             </div>
           </div>
           <div className={`row align-center ${styles.singupRow} `}>
             <div className={styles.signupLabel}>Password:</div>
             <div className={styles.col}>
-              <input type="password" placeholder="Please enter password" onChange={this.handleChange.bind(this, 'password')} />
+              <input type="password" placeholder="Please enter password" onChange={this.handleChange.bind(this, 'password')} maxLength="30"/>
             </div>
           </div>
           <div className={`row align-center ${styles.singupRow} `}>
             <div className={styles.signupLabel}>Confirm Password:</div>
             <div className={styles.col}>
-              <input type="password" placeholder="Please enter confirm password" onChange={this.handleChange.bind(this, 'confirmPwd')} />
+              <input type="password" placeholder="Please enter confirm password" onChange={this.handleChange.bind(this, 'confirmPwd')} maxLength="30"/>
             </div>
           </div>
           <div className={`row align-center ${styles.singupRow} `}>
             <div className={styles.signupLabel}>Mobile:</div>
             <div className={styles.col}>
-              <input placeholder="Please enter mobile" onChange={this.handleChange.bind(this, 'mobile')} />
+              <input placeholder="Please enter mobile" onChange={this.handleChange.bind(this, 'mobile')} type="number" maxLength="15" />
             </div>
           </div>
 

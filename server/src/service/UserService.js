@@ -50,6 +50,10 @@ class UserService extends BaseService {
     if (confirmPwd != password) {
       this.failure('incorrect password input twice');
     }
+    
+    if (!/^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/.test(email)) {
+      this.failure('email Incorrect format');
+    }
 
     // judge user is exists
     const info = await this.findOne({username});
