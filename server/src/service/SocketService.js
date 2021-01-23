@@ -3,6 +3,7 @@ import WebSockerServer from 'ws';
 import BaseService from './BaseService';
 import UserService from './UserService';
 import TaskService from './TaskService';
+import CryptoJS from 'crypto-js';
 
 export default class SocketService extends BaseService {
   userNum = 0;
@@ -61,7 +62,7 @@ export default class SocketService extends BaseService {
       return;
     }
     const value = JSON.stringify({...data, createTime: new Date().getTime()});
-    if (client && client.readyState === WebSockerServer.OPEN) {
+    if (client.readyState === WebSockerServer.OPEN) {
       this.log('total', this.userNum, 'cmdName:', data.cmdName);
       client.send(value);
     }
@@ -100,12 +101,21 @@ export default class SocketService extends BaseService {
     this.sendData(client, {cmdName: 'Login', data: 'login success'});
   }
 
+  getDataId(data) {
+    const {user_id, username, content, create_time} = data;
+    return CryptoJS.MD5(`${user_id}_${username}_${content}_${create_time}`).toString();
+  }
+
   async Cmd_MessageList(client, body) {
     const {data} = body;
     const {project_id} = data;
     // this.log('project_id:', project_id);
-    const list = await this.find({project_id}, {_id: 0, project_id: 0}, {sort: {create_time: -1}, limit: 100});
+    const list = await this.find({project_id}, {project_id: 0}, {sort: {create_time: -1}, limit: 100});
     list.reverse();
+    list.forEach((item) => {
+      item.data_id = this.getDataId(item);
+    });
+    // console.log(JSON.stringify(list[0]));
     const info = {cmdName: 'MessageList', data: {project_id, list}};
     this.sendData(client, info);
   }
@@ -116,9 +126,10 @@ export default class SocketService extends BaseService {
     const {project_id, message: content} = data;
 
     const doc = {project_id, user_id, username, content, create_time: Date.now()};
-    await this.create(doc);
+    const new_doc = await this.create(doc);
     const list = await TaskService.find({project_id});
-    const msgInfo = {cmdName: 'Message', data: {project_id, data: doc}};
+    doc.data_id = this.getDataId(new_doc);
+    const msgInfo = {cmdName: 'Message', data: {project_id, data: new_doc}};
 
     if (list && list.length > 0) {
       const ownClient = this.ClientMap[list[0].own_id];
