@@ -39,6 +39,7 @@ class About extends BasePage {
             <div>14) Project sponsor modify and delete task</div>
             <div>15) Users view project data statistics</div>
             <div>16) Online communication of project team members</div>
+            <div>17) There are 4 task states, namely has not started, processing, completed and delay. When the task time exceeds the end time, the status changes to delay. If the user wants to change the status of the delay to another status, they need to change the end time to today and later.</div>
           </div>
         </div>
       </div>
