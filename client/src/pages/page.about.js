@@ -23,7 +23,7 @@ class About extends BasePage {
       <div className={styles.defaultCss}>
         <div className="row">
           <div className="col">
-            <div>1) User login00</div>
+            <div>1) User login00ZZ</div>
             <div>2) User registration</div>
             <div>3) User log out</div>
             <div>4) User search items</div>
